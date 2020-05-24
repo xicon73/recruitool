@@ -30,9 +30,9 @@ class ApiController extends Controller
     public function review(Request $request) {
         $user = $request->github_username;
 
-        $response = Http::get("https://api.github.com/search/users?q=user:" . $user)->json();
+        $response = Http::get("https://api.github.com/users/" . $user)->json();
         
-        if (in_array('Validation Failed',$response)) {
+        if (in_array('Not Found',$response)) {
             $message = "Sorry, but " . $user . " doesn't exist !";
             $code = 404;
         }
@@ -45,7 +45,7 @@ class ApiController extends Controller
             }
             else {
                 $message = "Oops. Somethng wrong is not right";
-                $code    = 500;
+                $code    = 400;
             }
         }
         return response()->json(["message" => $message], $code);
@@ -63,7 +63,7 @@ class ApiController extends Controller
 
     public function test() {
         $client = new Client();
-        $response = $client->request('GET', 'https://api.github.com/search/users?q=user:xicon73/repos', ['headers' =>  ['token ' . $_ENV['GITHUB_TOKEN']]]);
+        $response = $client->request('GET', 'https://api.github.com/users/xicon7373', ['headers' =>  ['token ' . $_ENV['GITHUB_TOKEN']]]);
         // $res=$response->getBody()->getContents();
         dd($response);
 
