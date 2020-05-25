@@ -9,7 +9,16 @@ You can search GitHub users by location, repository language and the number of f
 ## How can I use Recuitool?
 
 1. Get Postman
-2. Send your requests to https://recruitool.herokuapp.com
+2. Send your requests to `https://recruitool.herokuapp.com/api/candidates/{feature}?{query}`
+
+## What if I want to run this locally?
+
+1. Create database on Mysql
+2. Update mysql infos on `.env`
+3. Run migrations `php artisan migrate`
+4. Run the server `php artisan serve`
+5. Get Postman
+6. Send your requests to `http://127.0.0.1:8000/api/candidates/{feature}?{query}`
 
 ## API Documentation
 
