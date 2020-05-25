@@ -13,4 +13,4 @@ You can search GitHub users by location, repository language and the number of f
 
 ## API Documentation
 
-You can fin the documentation for the API [here](https://app.swaggerhub.com/apis/xicon73/recruitool-api/1.0.0) 
+You can fin the documentation for the API [here](https://app.swaggerhub.com/apis-docs/xicon73/recruitool-api/1.0.0#/) 
