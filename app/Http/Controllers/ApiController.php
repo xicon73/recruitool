@@ -20,7 +20,7 @@ class ApiController extends Controller
         $users    = json_decode($response->getBody())->items;
 
         if (empty($users)) {
-            return response()->json(["message" => "Não existem candidatos com os filtros inseridos"], 200);
+            return response()->json(["message" => "Não existem candidatos com os filtros inseridos"], 404);
         }
 
         return response()->json($users, 200);

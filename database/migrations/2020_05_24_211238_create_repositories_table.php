@@ -23,7 +23,6 @@ class CreateRepositoriesTable extends Migration
             $table->string('language')->nullable();
             $table->integer('forks');
             $table->integer('open_issues');
-            $table->string('license')->nullable();
             $table->integer('candidate_id')->unsigned();
             $table->foreign('candidate_id')->references('id')->on('candidates');
 
