@@ -11,70 +11,61 @@ use GuzzleHttp\Client;
 class ApiController extends Controller
 {
     public function search(Request $request) {
-        // $location = $request->location;
-        // $link = "https//api.github.com/search/users?q=location:";
-        // $link = $link . $location;
-        // $response = Http::get("https://api.github.com/search/users?q=location:" . $location);
-        // $json = $response->json();
-        // $users = $json['items'];
-        
         $request_query = parse_url($request->fullUrl(),PHP_URL_QUERY);
         $change        = array("=" => ":", "&" => "+");
         $query         = strtr($request_query,$change);
 
-        $users = Http::get("https://api.github.com/search/users?q=" . $query)->json()['items'];
+        $client   = new Client();
+        $response = $client->request('GET', 'https://api.github.com/search/users?q='.$query, ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']]]);
+        $users    = json_decode($response->getBody())->items;
+
+        if (empty($users)) {
+            return response()->json(["message" => "Não existem candidatos com os filtros inseridos"], 200);
+        }
 
         return response()->json($users, 200);
     }
 
     public function review(Request $request) {
-        $user = $request->github_username;
+        $client   = new Client();
+        $username = $request->github_username;
+        $user     = $client->request('GET', 'https://api.github.com/users/'.$username, ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']]]);
+        $user     = json_decode($user->getBody(), TRUE);
 
-        $response = Http::get("https://api.github.com/users/" . $user)->json();
-        
-        if (in_array('Not Found',$response)) {
-            $message = "Sorry, but " . $user . " doesn't exist !";
-            $code = 404;
+        $repositories = $client->request('GET', 'https://api.github.com/users/'.$username.'/repos', ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']]]);
+        $repos        = json_decode($repositories->getBody(), TRUE);
+
+        $candidate                   = new Candidate($user);
+        $candidate->github_username  = $request->github_username;
+        $candidate->job_category     = $request->job_category;
+        $candidate->skill_level      = $request->skill_level;
+        $candidate->fit_for_job      = $request->fit_for_job;
+        $candidate->commentary_notes = $request->commentary_notes;
+
+        if($candidate->save()) {
+            $candidate->repositories()->createMany($repos);
+            $message = $username . " adicionado à lista de candidatos";
+            $code    = 201;
         }
         else {
-            $candidate = new Candidate($request->all());
-                
-            if($candidate->save()) {
-                $message = $user . " added to list of candidates";
-                $code    = 201;
-            }
-            else {
-                $message = "Oops. Somethng wrong is not right";
-                $code    = 400;
-            }
+            $message = "Oops. Something wrong is not right";
+            $code    = 400;
         }
+
         return response()->json(["message" => $message], $code);
     }
-        // $response = Http::get("https://api.github.com/search/users?q=user:" . $user);
-        // $json = $response->json();
-
-        // return response()->json($json, 200);
 
     public function list() {
-        $candidates = Candidate::get();
+        $candidates = Candidate::with('repositories')->get();
 
         return response()->json($candidates,200);
     }
 
     public function test() {
         $client = new Client();
-        $response = $client->request('GET', 'https://api.github.com/users/xicon7373', ['headers' =>  ['token ' . $_ENV['GITHUB_TOKEN']]]);
-        // $res=$response->getBody()->getContents();
-        dd($response);
+        $response = $client->request('GET', 'https://api.github.com/users/xicon73', ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']]]);
+        $res=$response->getBody()->getContents();
+        dd($res);
 
     }
 }
-
-
-
-// $response = Http::withHeaders([
-        //     'X-First' => 'foo',
-        //     'X-Second' => 'bar'
-        // ])->get('http://test.com/users', [
-        //     'name' => 'Taylor',
-        // ]);

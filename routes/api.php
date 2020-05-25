@@ -21,4 +21,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/candidates/search', 'ApiController@search');
 Route::post('/candidates/review', 'ApiController@review');
 Route::get('/candidates/list', 'ApiController@list');
-Route::get('/candidates/test', 'ApiController@test');
+Route::get('/candidates/clean', 'ApiController@clean');
