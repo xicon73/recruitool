@@ -16,7 +16,6 @@ class Repository extends Model
                            'language',
                            'forks',
                            'open_issues',
-                           'license',
                            'candidate_id'
                         ];
 
