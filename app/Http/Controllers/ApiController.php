@@ -16,7 +16,7 @@ class ApiController extends Controller
         $query         = strtr($request_query,$change);
 
         $client   = new Client();
-        $response = $client->request('GET', 'https://api.github.com/search/users?q='.$query, ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']], 'timeout' => 300]);
+        $response = $client->request('GET', 'https://api.github.com/search/users?q='.$query, ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']], 'exceptions' => false, 'timeout' => 300]);
         $users    = json_decode($response->getBody())->items;
 
         if (empty($users)) {
