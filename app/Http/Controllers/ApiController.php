@@ -16,7 +16,7 @@ class ApiController extends Controller
         $query         = strtr($request_query,$change);
 
         $client   = new Client();
-        $response = $client->request('GET', 'https://api.github.com/search/users?q='.$query, ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']], 'exceptions' => false, 'timeout' => 300]);
+        $response = $client->request('GET', 'https://api.github.com/search/users?q='.$query, ['headers' =>  [ 'Authorization' => 'token ' . config('services.github.token')], 'exceptions' => false, 'timeout' => 300]);
         $users    = json_decode($response->getBody())->items;
 
         if (empty($users)) {
@@ -29,10 +29,10 @@ class ApiController extends Controller
     public function review(Request $request) {
         $client   = new Client();
         $username = $request->github_username;
-        $user     = $client->request('GET', 'https://api.github.com/users/'.$username, ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']]]);
+        $user     = $client->request('GET', 'https://api.github.com/users/'.$username, ['headers' =>  [ 'Authorization' => 'token ' . config('services.github.token')]]);
         $user     = json_decode($user->getBody(), TRUE);
 
-        $repositories = $client->request('GET', 'https://api.github.com/users/'.$username.'/repos', ['headers' =>  [ 'Authorization' => 'token ' . $_ENV['GITHUB_TOKEN']]]);
+        $repositories = $client->request('GET', 'https://api.github.com/users/'.$username.'/repos', ['headers' =>  [ 'Authorization' => 'token ' . config('services.github.token')]]);
         $repos        = json_decode($repositories->getBody(), TRUE);
 
         $candidate                   = new Candidate($user);

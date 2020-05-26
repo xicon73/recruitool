@@ -8,7 +8,8 @@ You can search GitHub users by location, repository language and the number of f
 
 ## How can I use Recuitool?
 
-1. Soon online
+1. Get Postman
+2. Send your requests to `https://recruitool.herokuapp.com/api/candidates/{feature}?{query}`
 
 ## What if I want to run this locally?
 
